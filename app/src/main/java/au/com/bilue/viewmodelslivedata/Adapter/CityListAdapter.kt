@@ -26,3 +26,4 @@ class CityListAdapter(val cityList: CityListViewModel) : RecyclerView.Adapter<Ci
 
 	class ViewHolder(val binding: CityViewBinding) : RecyclerView.ViewHolder(binding.root)
 }
+

@@ -5,43 +5,40 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import au.com.bilue.viewmodelslivedata.ViewModel.CityListViewModel
 import android.arch.lifecycle.ViewModelProviders
+import android.databinding.DataBindingUtil
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.widget.Button
 import au.com.bilue.viewmodelslivedata.Adapter.CityListAdapter
 import au.com.bilue.viewmodelslivedata.Model.CityModel
+import au.com.bilue.viewmodelslivedata.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
 
-	lateinit var cityList: CityListViewModel
-	lateinit var recyclerView: RecyclerView
+	private lateinit var cityList: CityListViewModel
+	private lateinit var binding: ActivityMainBinding
 
-	var cityListOneShowing = true
+	private var cityListOneShowing = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_main)
+		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+		cityList = ViewModelProviders.of(this).get(CityListViewModel::class.java)
 
 		setupRecyclerView()
 		setupButton()
 	}
 
-	fun setupRecyclerView() {
-		cityList = ViewModelProviders.of(this).get(CityListViewModel::class.java)
-
-		recyclerView = findViewById(R.id.recyclerView)
-		recyclerView.adapter = CityListAdapter(cityList)
-		recyclerView.layoutManager = LinearLayoutManager(baseContext)
+	private fun setupRecyclerView() {
+		binding.recyclerView.adapter = CityListAdapter(cityList)
+		binding.recyclerView.layoutManager = LinearLayoutManager(baseContext)
 
 		cityList.cities.observe(this, Observer {
-			recyclerView.adapter.notifyDataSetChanged()
+			binding.recyclerView.adapter.notifyDataSetChanged()
 		})
 	}
 
-	fun setupButton() {
-		val button = findViewById<Button>(R.id.button)
-		button.setOnClickListener {
+	private fun setupButton() {
+		binding.button.setOnClickListener {
 			if (cityListOneShowing) {
 				cityList.cities.postValue(cityListOne())
 			} else {
@@ -51,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
-	fun cityListOne(): List<CityModel> {
+	private fun cityListOne(): List<CityModel> {
 		var cityListOne: MutableList<CityModel> = ArrayList()
 		cityListOne.add(CityModel("Berlin"))
 		cityListOne.add(CityModel("London"))
@@ -60,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 		return cityListOne
 	}
 
-	fun cityListTwo(): List<CityModel> {
+	private fun cityListTwo(): List<CityModel> {
 		var cityListTwo: MutableList<CityModel> = ArrayList()
 		cityListTwo.add(CityModel("Sydney"))
 		cityListTwo.add(CityModel("Melbourne"))
