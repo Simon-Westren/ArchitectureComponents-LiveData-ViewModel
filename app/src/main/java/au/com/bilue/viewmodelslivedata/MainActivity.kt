@@ -6,9 +6,13 @@ import android.os.Bundle
 import au.com.bilue.viewmodelslivedata.ViewModel.CityListViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
+import android.graphics.Color
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import au.com.bilue.viewmodelslivedata.Adapter.CityListAdapter
 import au.com.bilue.viewmodelslivedata.Model.CityModel
+import au.com.bilue.viewmodelslivedata.Network.RemoteDataSource
+import au.com.bilue.viewmodelslivedata.ViewModel.GitOrganisationViewModel
 import au.com.bilue.viewmodelslivedata.databinding.ActivityMainBinding
 
 
@@ -23,6 +27,10 @@ class MainActivity : AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 		cityList = ViewModelProviders.of(this).get(CityListViewModel::class.java)
+
+		ViewModelProviders.of(this)
+				.get(GitOrganisationViewModel::class.java)
+				.liveData.observe(this, Observer { response -> })
 
 		setupRecyclerView()
 		setupButton()
@@ -45,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 				cityList.cities.postValue(cityListTwo())
 			}
 			cityListOneShowing = !cityListOneShowing
+			RemoteDataSource.INSTANCE.organisationHandler.organisations().refresh()
 		}
 	}
 
